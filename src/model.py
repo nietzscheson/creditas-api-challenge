@@ -84,7 +84,7 @@ class LeadHouse(Resource, LeadAware):
 class LeadPayroll(Resource, LeadAware):
     __tablename__ = "lead_payroll"
     company = Column(String())
-    admission_at = Column(DateTime())
+    admission_at = Column(String())
     
     def as_dict(self):
         return {

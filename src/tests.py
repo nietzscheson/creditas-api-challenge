@@ -20,7 +20,7 @@ class TestMyApp(MyAppTestCase):
         Base.metadata.drop_all(engine)
         Base.metadata.create_all(engine)
 
-    def test_create_lead_auto_aprove(self):
+    def test_create_lead_auto_aproved(self):
         result = self.simulate_post("/lead", body=
           """{
             "type": "AUTO",
@@ -56,7 +56,7 @@ class TestMyApp(MyAppTestCase):
         response = """{"message": "The Lead 1 record has been created!", "data": {"id": 1, "type": "AUTO", "status": "REJECTED", "name": "Isabella Angulo", "telephone": "123456789", "email": "isabella@angulo.com", "rfc": "ABCD1234567890", "address": "Calle 1", "auto": {"id": 1, "model": "Ford", "price": 600000.0}}}"""
         self.assertEqual(result.text, response)
         
-    def test_create_lead_house_aprove(self):
+    def test_create_lead_house_aproved(self):
         result = self.simulate_post("/lead", body=
           """{
             "type": "HOUSE",
@@ -90,4 +90,40 @@ class TestMyApp(MyAppTestCase):
           }"""
         )
         response = """{"message": "The Lead 1 record has been created!", "data": {"id": 1, "type": "HOUSE", "status": "REJECTED", "name": "Emmanuel Angulo", "telephone": "123456789", "email": "emmanuel@angulo.com", "rfc": "ABCD1234567890", "address": "Calle 2", "house": {"id": 1, "address": "QROO", "price": 800000.0}}}"""
+        self.assertEqual(result.text, response)
+        
+    def test_create_lead_payroll_aproved(self):
+        result = self.simulate_post("/lead", body=
+          """{
+            "type": "PAYROLL",
+            "name": "Dulce Agar", 
+            "telephone": "123456789",
+            "email": "dulce@agar.com",
+            "rfc": "ABCD1234567890",
+            "address": "Calle 3",
+            "payroll": {
+              "company": "ABCD inc.",
+              "admission_at": "15"
+            }
+          }"""
+        )
+        response = """{"message": "The Lead 1 record has been created!", "data": {"id": 1, "type": "PAYROLL", "status": "APROVE", "name": "Dulce Agar", "telephone": "123456789", "email": "dulce@agar.com", "rfc": "ABCD1234567890", "address": "Calle 3", "payroll": {"id": 1, "company": "ABCD inc.", "admission_at": "15"}}}"""
+        self.assertEqual(result.text, response)
+        
+    def test_create_lead_payroll_rejected(self):
+        result = self.simulate_post("/lead", body=
+          """{
+            "type": "PAYROLL",
+            "name": "Dulce Agar", 
+            "telephone": "123456789",
+            "email": "dulce@agar.com",
+            "rfc": "ABCD1234567890",
+            "address": "Calle 3",
+            "payroll": {
+              "company": "ABCD inc.",
+              "admission_at": "12"
+            }
+          }"""
+        )
+        response = """{"message": "The Lead 1 record has been created!", "data": {"id": 1, "type": "PAYROLL", "status": "REJECTED", "name": "Dulce Agar", "telephone": "123456789", "email": "dulce@agar.com", "rfc": "ABCD1234567890", "address": "Calle 3", "payroll": {"id": 1, "company": "ABCD inc.", "admission_at": "12"}}}"""
         self.assertEqual(result.text, response)

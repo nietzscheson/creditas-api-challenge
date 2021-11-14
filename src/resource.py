@@ -2,7 +2,7 @@ import json
 
 import falcon
 from sqlalchemy import func, desc, extract, and_
-from model import Lead, LeadType, LeadAuto, LeadStatus, LeadHouse
+from model import Lead, LeadType, LeadAuto, LeadStatus, LeadHouse, LeadPayroll
 
 class LeadResource:
     def on_get(self, req, resp):
@@ -40,6 +40,14 @@ class LeadResource:
             if house["address"] in ["CDMX", "MEXICO_STATE"]:
                 lead.status = LeadStatus.APROVE.value
                 
+        ## Status for LeadPayroll
+        if lead.type == LeadType.PAYROLL.value:
+            lead.status = LeadStatus.REJECTED.value
+            payroll = data["payroll"]
+            
+            if int(payroll["admission_at"]) >= 14:
+                lead.status = LeadStatus.APROVE.value
+                
         session.add(lead)
         session.flush()
         
@@ -67,6 +75,17 @@ class LeadResource:
                 session.add(lead_house)
                 session.flush()
                 
+            ## Persist LeadPayroll
+            if lead.type == LeadType.PAYROLL.value:
+                lead_payroll = LeadPayroll()
+                lead_payroll.lead_id = lead.id
+                payroll = data["payroll"]
+                lead_payroll.admission_at = payroll["admission_at"]
+                lead_payroll.company = payroll["company"]
+                
+                session.add(lead_payroll)
+                session.flush()
+                
             session.commit()
             
             data = lead.as_dict()
@@ -75,6 +94,9 @@ class LeadResource:
                 
             if lead.type.value == LeadType.HOUSE.value:
                 data["house"] = lead_house.as_dict()
+                
+            if lead.type.value == LeadType.PAYROLL.value:
+                data["payroll"] = lead_payroll.as_dict()
                 
             resp.media = {"message": f"The Lead {lead.id} record has been created!", 'data': data}
             resp.status = falcon.HTTP_200
