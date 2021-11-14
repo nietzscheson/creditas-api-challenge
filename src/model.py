@@ -14,27 +14,38 @@ class Resource(Base):
 
 
 class LeadType(enum.Enum):
-    CAR = "car"
-    HOUSE = ("house",)
-    PAYROLL = "payroll"
+    AUTO = "AUTO"
+    HOUSE = "HOUSE"
+    PAYROLL = "PAYROLL"
 
 
 class LeadStatus(enum.Enum):
-    NEW = "new"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-    CANCELLED = "cancelled"
+    NEW = "NEW"
+    APROVE = "APROVE"
+    REJECTED = "REJECTED"
 
 
 class Lead(Resource):
     __tablename__ = "lead"
-    type = Column(Enum(LeadType, default=LeadType.CAR, nullable=False))
+    type = Column(Enum(LeadType, default=LeadType.AUTO, nullable=False))
     status = Column(Enum(LeadStatus, default=LeadStatus.NEW, nullable=False))
     name = Column(String())
     telephone = Column(String())
     email = Column(String())
     rfc = Column(String())
     address = Column(String())
+    
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "type": self.type.value,
+            "status": self.status.value,
+            "name": self.name,
+            "telephone": self.telephone,
+            "email": self.email,
+            "rfc": self.rfc,
+            "address": self.address
+        }
 
 
 class LeadAware(Base):
@@ -47,6 +58,13 @@ class LeadAuto(Resource, LeadAware):
     __tablename__ = "lead_auto"
     model = Column(String())
     price = Column(Float())
+    
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "model": self.model,
+            "price": self.price
+        }
 
 
 class LeadHouse(Resource, LeadAware):
