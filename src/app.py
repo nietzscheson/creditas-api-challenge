@@ -12,4 +12,4 @@ manager = falcon_sqla.Manager(engine)
 
 app = application = falcon.App(middleware=[manager.middleware])
 
-app.add_route("/lead", LeadResource())
+app.add_route("/leads", LeadResource())

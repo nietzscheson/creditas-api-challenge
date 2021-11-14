@@ -19,5 +19,5 @@ jobs:
               run: make
             - name: Run Black
               run: make lint
-#            - name: Run Tests
-#              run: make test
+            - name: Run Tests
+              run: make test
