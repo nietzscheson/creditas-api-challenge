@@ -34,6 +34,7 @@ class Lead(Resource):
     email = Column(String())
     rfc = Column(String())
     address = Column(String())
+    auto = relationship("LeadAuto")
     
     def as_dict(self):
         return {
@@ -71,9 +72,23 @@ class LeadHouse(Resource, LeadAware):
     __tablename__ = "lead_house"
     address = Column(String())
     price = Column(Float())
+    
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "address": self.address,
+            "price": self.price
+        }
 
 
 class LeadPayroll(Resource, LeadAware):
     __tablename__ = "lead_payroll"
     company = Column(String())
     admission_at = Column(DateTime())
+    
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "company": self.company,
+            "admission_at": self.admission_at
+        }
